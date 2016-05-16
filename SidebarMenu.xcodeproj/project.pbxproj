@@ -12,6 +12,7 @@
 		CFCAD9C81CEA8AB700C8A852 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CFCAD9C61CEA8AB700C8A852 /* Main.storyboard */; };
 		CFCAD9CA1CEA8AB700C8A852 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CFCAD9C91CEA8AB700C8A852 /* Assets.xcassets */; };
 		CFCAD9CD1CEA8AB700C8A852 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CFCAD9CB1CEA8AB700C8A852 /* LaunchScreen.storyboard */; };
+		CFCAD9D51CEA8AD400C8A852 /* SidebarMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFCAD9D41CEA8AD400C8A852 /* SidebarMenu.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -22,6 +23,7 @@
 		CFCAD9C91CEA8AB700C8A852 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		CFCAD9CC1CEA8AB700C8A852 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		CFCAD9CE1CEA8AB700C8A852 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		CFCAD9D41CEA8AD400C8A852 /* SidebarMenu.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SidebarMenu.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -55,6 +57,7 @@
 			isa = PBXGroup;
 			children = (
 				CFCAD9C21CEA8AB700C8A852 /* AppDelegate.swift */,
+				CFCAD9D41CEA8AD400C8A852 /* SidebarMenu.swift */,
 				CFCAD9C41CEA8AB700C8A852 /* ViewController.swift */,
 				CFCAD9C61CEA8AB700C8A852 /* Main.storyboard */,
 				CFCAD9C91CEA8AB700C8A852 /* Assets.xcassets */,
@@ -135,6 +138,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CFCAD9D51CEA8AD400C8A852 /* SidebarMenu.swift in Sources */,
 				CFCAD9C51CEA8AB700C8A852 /* ViewController.swift in Sources */,
 				CFCAD9C31CEA8AB700C8A852 /* AppDelegate.swift in Sources */,
 			);

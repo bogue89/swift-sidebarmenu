@@ -3,7 +3,7 @@
 //  SidebarMenu
 //
 //  Created by Jorge Benavides on 5/16/16.
-//  Copyright © 2016 Jorge Benavides. All rights reserved.
+//  Copyright © 2016 PEW PEW. All rights reserved.
 //
 
 import UIKit
