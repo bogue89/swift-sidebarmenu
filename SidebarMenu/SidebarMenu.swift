@@ -15,8 +15,11 @@ class SidebarController: UIViewController, UIViewControllerTransitioningDelegate
     let presentInteraction = SidebarPresentInteraction()
     let dismissInteraction = SidebarDismissInteraction()
     
-    var snapshotViewForDismissedController:UIView = UIView()
-    var peekGapForDismissedController:CGFloat = 40
+    var dismissedControllerView:UIView? = nil
+    var peekViewForDismissedController = UIView()
+    var constraintForPeekView:NSLayoutConstraint!
+    var gapForPeekView:CGFloat = 40
+    
     var presentAnimationDuration:NSTimeInterval = 0.5
     var dismissAnimationDuration:NSTimeInterval = 0.5
     
@@ -25,6 +28,46 @@ class SidebarController: UIViewController, UIViewControllerTransitioningDelegate
         // we link the inherited controller to make changes on the view and other values any time
         self.presentAnimation.MainController = self
         self.dismissAnimation.MainController = self
+        self.view.addSubview(self.peekViewForDismissedController)
+        self.peekViewForDismissedController.translatesAutoresizingMaskIntoConstraints = false
+        self.view.addConstraint(NSLayoutConstraint(
+            item: self.peekViewForDismissedController,
+            attribute: NSLayoutAttribute.Top,
+            relatedBy: NSLayoutRelation.Equal,
+            toItem: self.view,
+            attribute: NSLayoutAttribute.Top,
+            multiplier: 1,
+            constant: 0))
+        self.view.addConstraint(NSLayoutConstraint(
+            item: self.peekViewForDismissedController,
+            attribute: NSLayoutAttribute.Bottom,
+            relatedBy: NSLayoutRelation.Equal,
+            toItem: self.view,
+            attribute: NSLayoutAttribute.Bottom,
+            multiplier: 1,
+            constant: 0))
+        self.view.addConstraint(NSLayoutConstraint(
+            item: self.peekViewForDismissedController,
+            attribute: NSLayoutAttribute.Width,
+            relatedBy: NSLayoutRelation.Equal,
+            toItem: self.view,
+            attribute: NSLayoutAttribute.Width,
+            multiplier: 1,
+            constant: 0))
+        self.constraintForPeekView = NSLayoutConstraint(
+            item: self.peekViewForDismissedController,
+            attribute: NSLayoutAttribute.Left,
+            relatedBy: NSLayoutRelation.Equal,
+            toItem: self.view,
+            attribute: NSLayoutAttribute.Right,
+            multiplier: 1,
+            constant: 0)
+        self.view.addConstraint(self.constraintForPeekView)
+    }
+    override func viewDidAppear(animated: Bool) {
+        super.viewDidAppear(animated)
+        self.view.bringSubviewToFront(self.peekViewForDismissedController)
+        self.peekViewForDismissedController.backgroundColor = UIColor.redColor()
     }
     override func presentViewController(viewControllerToPresent: UIViewController, animated: Bool, completion: (() -> Void)?) {
         // delegate the present animation of the new controller to sidebarcontroller
@@ -36,6 +79,11 @@ class SidebarController: UIViewController, UIViewControllerTransitioningDelegate
         
         // call the present method from super
         super.presentViewController(viewControllerToPresent, animated: animated, completion: completion)
+    }
+    override func viewWillTransitionToSize(size: CGSize, withTransitionCoordinator coordinator: UIViewControllerTransitionCoordinator) {
+        super.viewWillTransitionToSize(size, withTransitionCoordinator: coordinator)
+        constraintForPeekView.constant = 0
+        self.view.updateConstraints()
     }
     func animationControllerForPresentedController(presented: UIViewController, presentingController presenting: UIViewController, sourceController source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
         // set the animation for the presented transition
@@ -67,7 +115,7 @@ class SidebarPresentAnimation: NSObject, UIViewControllerAnimatedTransitioning {
         let containerView = transitionContext.containerView()!
         let bounds = UIScreen.mainScreen().bounds
         
-        toViewController.view.frame = CGRectOffset(bounds, bounds.size.width - (self.MainController.snapshotViewForDismissedController.superview != nil ? self.MainController.peekGapForDismissedController : 0), 0)
+        toViewController.view.frame = CGRectOffset(bounds, bounds.size.width - (self.MainController.dismissedControllerView != nil ? -self.MainController.constraintForPeekView.constant : 0), 0)
         
         containerView.addSubview(toViewController.view)
         
@@ -95,9 +143,8 @@ class SidebarDismissAnimation: NSObject, UIViewControllerAnimatedTransitioning {
         let containerView = transitionContext.containerView()!
         let bounds = UIScreen.mainScreen().bounds
         
-        self.MainController.view.removeConstraints(self.MainController.snapshotViewForDismissedController.constraints)
-        self.MainController.snapshotViewForDismissedController.removeFromSuperview()
-        self.MainController.snapshotViewForDismissedController = fromViewController.view.snapshotViewAfterScreenUpdates(true)
+        self.MainController.dismissedControllerView?.removeFromSuperview()
+        self.MainController.dismissedControllerView = fromViewController.view.snapshotViewAfterScreenUpdates(true)
         
         fromViewController.view.frame = bounds
         toViewController.view.frame = bounds
@@ -107,25 +154,25 @@ class SidebarDismissAnimation: NSObject, UIViewControllerAnimatedTransitioning {
         
         UIView.animateWithDuration(self.transitionDuration(transitionContext), animations: {
             
-            fromViewController.view.frame = CGRectOffset(bounds, bounds.size.width-self.MainController.peekGapForDismissedController, 0)
+            fromViewController.view.frame = CGRectOffset(bounds, bounds.size.width-self.MainController.gapForPeekView, 0)
             
             }, completion: {
                 finished in
-                self.MainController.view.addSubview(self.MainController.snapshotViewForDismissedController)
-                self.MainController.snapshotViewForDismissedController.frame = fromViewController.view.frame
+                self.MainController.constraintForPeekView.constant = -self.MainController.gapForPeekView
+                self.MainController.peekViewForDismissedController.addSubview(self.MainController.dismissedControllerView!)
                 transitionContext.completeTransition(!transitionContext.transitionWasCancelled())
         })
     }
 }
 class SidebarPresentInteraction: UIPercentDrivenInteractiveTransition {
-    var viewController: UIViewController!
+    var viewController: SidebarController!
     var snapController: UIViewController!
     var shouldCompleteTransition = false
     var transitionInProgress = false
     var width:CGFloat = 0.0
     
     func attachToViewController(viewController: UIViewController, snapController: UIViewController) {
-        self.viewController = viewController
+        self.viewController = viewController as! SidebarController
         self.snapController = snapController
         self.width = self.viewController.view.frame.size.width
         setupGestureRecognizer(self.viewController.view)
@@ -135,6 +182,9 @@ class SidebarPresentInteraction: UIPercentDrivenInteractiveTransition {
         let gesture = UIScreenEdgePanGestureRecognizer(target: self, action: #selector(self.handlePanGesture(_:)))
         gesture.edges = .Right
         view.addGestureRecognizer(gesture)
+        
+        let touch = UIPanGestureRecognizer(target: self, action: #selector(self.handlePanGesture(_:)))
+        viewController.peekViewForDismissedController.addGestureRecognizer(touch)
     }
     
     func handlePanGesture(gestureRecognizer: UIPanGestureRecognizer) {
