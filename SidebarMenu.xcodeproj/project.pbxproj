@@ -290,6 +290,7 @@
 				CFCAD9D31CEA8AB700C8A852 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

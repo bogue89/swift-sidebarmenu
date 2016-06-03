@@ -13,6 +13,8 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
+        self.view.layer.borderColor = UIColor.greenColor().CGColor
+        self.view.layer.borderWidth = 2
     }
 
     override func didReceiveMemoryWarning() {
