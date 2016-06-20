@@ -144,7 +144,7 @@ class SidebarDismissAnimation: NSObject, UIViewControllerAnimatedTransitioning {
         let bounds = UIScreen.mainScreen().bounds
         
         self.MainController.dismissedControllerView?.removeFromSuperview()
-        self.MainController.dismissedControllerView = fromViewController.view.snapshotViewAfterScreenUpdates(true)
+        self.MainController.dismissedControllerView = fromViewController.view.snapshotViewAfterScreenUpdates(false)
         
         fromViewController.view.frame = bounds
         toViewController.view.frame = bounds
